@@ -1,0 +1,25 @@
+{
+  "name": "css-architecture",
+  "description": "Base to create modular CSS",
+  "main": "main.js",
+  "authors": [
+    "Matteo Gilardoni"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/MatteoWebDesigner/CSS-Architecture",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "~3.3.6",
+    "moment": "~2.10.6",
+    "riot": "~2.3.16",
+    "lodash": "~4.5.1",
+    "es6-promise-polyfill": "~1.1.1"
+  }
+}
