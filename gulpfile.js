@@ -1,5 +1,7 @@
 'use strict';
 
+var fs              = require('fs');
+var path            = require('path');
 var _               = require('lodash');
 var del             = require('del');
 var parseArgs       = require('minimist');
@@ -15,20 +17,11 @@ var connect         = require('gulp-connect');
 var open            = require('gulp-open');
 var livereload      = require('gulp-livereload');
 var sourcemaps      = require('gulp-sourcemaps');
+var gulpData        = require('gulp-data');
 var htmlmin         = require('gulp-htmlmin');
 var jade            = require('gulp-jade');
-var sass            = require('gulp-sass');
 var postcss         = require('gulp-postcss');
-var autoprefixer    = require('gulp-autoprefixer');
-var cssnano         = require('gulp-cssnano');
-var combineMq       = require('gulp-combine-mq');
-var csslint         = require('gulp-csslint');
-var stylelint       = require('gulp-stylelint').default;
-var stylelintLog    = require('gulp-stylelint-console-reporter').default;
-var doiuse          = require('doiuse');
-var symdiff         = require('gulp-symdiff');
-var symdiffHtml     = require('symdiff-html');
-var symdiffCss      = require('symdiff-css');
+var cssModules      = require('postcss-modules');
 var concat          = require('gulp-concat');
 var browserify      = require('browserify');
 var riot            = require('riot');
@@ -72,7 +65,12 @@ gulp.task('html', function()
 
 gulp.task('jade', function()
 {
+    var json = require('./css-module.json')
+
     return gulp.src(config.jadePageFiles)
+        .pipe(gulpData(function(file) {
+            return { className: json };
+        }))
         .pipe(jade({pretty: true}))
         .pipe(gulp.dest(config.htmlDist))
         .pipe(livereload());
@@ -89,151 +87,38 @@ gulp.task('cssVendor', function()
     return gulp
         .src(config.vendor.css)
         .pipe(concat('vendor.css'))
-        .pipe(cssnano())
         .pipe(gulp.dest(config.cssDist));
 });
 
 
-gulp.task('css', function()
-{
+gulp.task('css', function() {
+
     return gulp
-        .src(config.sassIndex)
-        .pipe(
-            gulpif(isSourceMap(), sourcemaps.init())
-        )
-        .pipe(sass().on('error', sass.logError))
-        .pipe( // fontello anticache
-            gulpPreprocess(config.preprocess)
-        )
-        .pipe(autoprefixer({
-            browsers: ['last 2 versions'],
-            cascade: false
-        }))
-        .pipe(combineMq({beautify: false}))
-        .pipe(cssnano())
-        .pipe(
-            gulpif(isSourceMap(),sourcemaps.write())
-        )
-        .pipe(gulp.dest(config.cssDist))
-        .pipe(livereload());
-});
+        .src('./src/css/main.css')
+        .pipe(postcss([
+            cssModules({
+                getJSON: function(cssFileName, json) {
+                    var path          = require('path');
+                    var cssName       = path.resolve('./dist/main.css');
+                    var jsonFileName  = path.resolve('./css-module.json');
 
+                    console.log(cssFileName, json, cssName);
 
-gulp.task('css-support', function() {
-    return gulp.src(config.sassIndex)
-        .pipe(sass().on('error', sass.logError))
-        .pipe( // fontello anticache
-            gulpPreprocess(config.preprocess)
-        )
-        .pipe(gulp.dest(config.cssTemp))
-        .pipe(
-            postcss([
-                doiuse({
-                    browsers: ['ie >= 10', '> 1%', 'last 2 versions'],
-                    onFeatureUsage: function(usageInfo) {
-                        console.log(usageInfo.message)
-                    }
-                })
-            ])
-        );
-});
+                    fs.writeFileSync(jsonFileName, JSON.stringify(json));
+                }
+            }),
+            cssModules({
+                generateScopedName: function(name, filename, css) {
+                    var path      = require('path');
+                    var i         = css.indexOf('.' + name);
+                    var numLines  = css.substr(0, i).split(/[\r\n]/).length;
+                    var file      = path.basename(filename, '.css');
 
-
-// I cannot add css-lint because output error
-gulp.task('css-lint', function ()
-{
-    gulp.src(config.cssDistFiles)
-    .pipe(csslint(config.csslint))
-    .pipe(csslint.reporter());
-});
-
-
-gulp.task('css-deprecated', function ()
-{
-    // to remove the css class search the comment "// @deprecated"
-    var CSS_CLASS_LIST = config.deprecatedClasses,
-        dToday = new Date(),
-        dFinalStage = new Date(config.deprecationEndDate),
-        today = dToday.getTime(),
-        finalStage = dFinalStage.getTime()
-    ;
-
-    _.forEach(CSS_CLASS_LIST, function(obj, key) {
-
-        gulp
-        .src(config.templates)
-        .pipe(
-            check(obj.regex)
-        )
-        .on('error', function (err) {
-            if (today >= finalStage) {
-                gutil.log(
-                    '\n\n' +
-                    gutil.colors.red('DANGER CSS CLASS Deprecated: ' + err.message +'\n') +
-                    '@deprecated: ' + gutil.colors.yellow(obj.oldClass) + ', \n' +
-                    '@use: ' + gutil.colors.green(obj.newClass) +
-                    '\n'
-                );
-                gutil.log(
-                    gutil.colors.red('Build Process has been stop, replace the class inside your project, the css class does not exist anymore')
-                );
-                process.exit(0);
-            } else {
-                gutil.log(
-                    '\n\n' +
-                    gutil.colors.yellow('WARNING CSS CLASS Deprecated: ' + err.message + '\n') +
-                    '@deprecated: ' + gutil.colors.yellow(obj.oldClass) + ', \n' +
-                    '@use: ' + gutil.colors.green(obj.newClass) +
-                    '\n'
-                );
-            }
-
-        });
-
-    });
-});
-
-// I cannot add css-unused because output a big error
-gulp.task('css-unused', function ()
-{
-    return gulp
-    .src([config.cssDistFiles, config.htmlFiles])
-    .pipe(symdiff({
-        templates: [symdiffHtml],        // list all templates plugins
-        css: [symdiffCss],               // list all css plugins
-        ignore: config.unusedCss.ignore  // classes to ignore
-    }));
-});
-
-
-gulp.task('css-stylelint', function ()
-{
-    return gulp
-        .src(config.sassIndex)
-        .pipe(sass().on('error', sass.logError))
-        .pipe( // fontello anticache
-            gulpPreprocess(config.preprocess)
-        )
-        .pipe(gulp.dest(config.cssTemp))
-        .pipe(
-            stylelint({
-                reporters: [stylelintLog()]
+                    return '_' + file + '_' + numLines + '_' + name;
+                }
             })
-        );
-});
-
-
-gulp.task('css-reference', function()
-{
-    gulp.src( './node_modules/backstopjs/gulpfile.js' )
-        .pipe( chug({tasks:['reference']}) );
-});
-
-
-gulp.task('css-test', function()
-{
-    gulp.src( './node_modules/backstopjs/gulpfile.js' )
-        .pipe( chug({tasks:['test']}) );
+        ]))
+        .pipe(gulp.dest('./build'));
 });
 
 
@@ -255,11 +140,11 @@ gulp.task('jsVendor', function()
 gulp.task('js', function()
 {
     return browserify({ entries: [config.jsMain] })
-    .transform(riotify) // pass options if you need
-    .bundle()
-    .pipe(source('main.js'))
-    .pipe(gulp.dest(config.jsDist))
-    .pipe(livereload());
+        .transform(riotify) // pass options if you need
+        .bundle()
+        .pipe(source('main.js'))
+        .pipe(gulp.dest(config.jsDist))
+        .pipe(livereload());
     // .pipe(
     //     gulpif(isSourceMap(), sourcemaps.init())
     // )
@@ -303,9 +188,8 @@ gulp.task('default', function ()
 {
     runSequence(
         'clean',
-        'css-stylelint',
-        ['fonts','html','jade','cssVendor','css','jsVendor','js'],
-        ['css-deprecated'],
+        ['cssVendor','css'],
+        ['fonts','html','jade','jsVendor','js'],
         'connect','watch'
     );
 });

@@ -1,5 +1,5 @@
 {
-  "name": "css-architecture",
+  "name": "css-module",
   "version": "1.0.0",
   "description": "Base to create modular CSS",
   "main": "index.js",
@@ -9,19 +9,20 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MatteoWebDesigner/CSS-Architecture.git"
+    "url": "git+https://github.com/MatteoWebDesigner/CSS-Module.git"
   },
   "author": "Matteo Gilardoni",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MatteoWebDesigner/CSS-Architecture/issues"
+    "url": "https://github.com/MatteoWebDesigner/CSS-Module/issues"
   },
-  "homepage": "https://github.com/MatteoWebDesigner/CSS-Architecture#readme",
+  "homepage": "https://github.com/MatteoWebDesigner/CSS-Module#readme",
   "dependencies": {
     "bower": "^1.6.9",
     "browserify": "^13.0.0",
     "del": "^2.2.0",
     "doiuse": "^2.3.0",
+    "fs": "0.0.2",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-check": "^0.1.1",
@@ -31,6 +32,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-connect": "^2.2.0",
     "gulp-cssnano": "^2.1.1",
+    "gulp-data": "^1.2.1",
     "gulp-htmlmin": "^1.2.0",
     "gulp-if": "^2.0.0",
     "gulp-jade": "^1.1.0",
@@ -45,13 +47,12 @@
     "jshint": "^2.8.0",
     "lodash": "^4.5.0",
     "minimist": "^1.2.0",
+    "path": "^0.12.7",
     "postcss": "^5.0.19",
+    "postcss-modules": "^0.4.0",
     "riot": "^2.3.16",
     "riotify": "^1.0.0",
     "run-sequence": "^1.1.5",
     "vinyl-source-stream": "^1.1.0"
-  },
-  "devDependencies": {
-    "stylelint-known-property": "0.0.5"
   }
 }
