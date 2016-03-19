@@ -1,8 +1,10 @@
+/*
 .test {
     composes: text_small from "../trump/typo.css";
     color:red;
 }
+*/
 
-.test2 {
-    color:blue;
+.card {
+    color:red;
 }

@@ -1,5 +1,6 @@
 'use strict';
 
+var mkdirp          = require('mkdirp');
 var fs              = require('fs');
 var path            = require('path');
 var _               = require('lodash');
@@ -22,6 +23,7 @@ var htmlmin         = require('gulp-htmlmin');
 var jade            = require('gulp-jade');
 var postcss         = require('gulp-postcss');
 var cssModules      = require('postcss-modules');
+var cssnano         = require('gulp-cssnano');
 var sass            = require('gulp-sass');
 var concat          = require('gulp-concat');
 var browserify      = require('browserify');
@@ -66,23 +68,22 @@ gulp.task('html', function()
 
 gulp.task('jade', function()
 {
-    var CSSModule = {};
-
-    function getClass(module) {
-        var moduleFileName  = path.resolve('./css-modules/' + module + '.json');
-        var classNames      = fs.readFileSync(moduleFileName).toString();
-        CSSModule[module] = JSON.parse( classNames );
-    }
-
     return gulp.src(config.jadePageFiles)
         .pipe(gulpData(function(file) {
+            var CSSModule = {};
 
-            _.forEach(['main','typo'], getClass);
+            _.forEach(['main','typo'], function (module) {
+                var moduleFileName  = path.resolve('./css-modules/' + module + '.json');
+                var classNames      = fs.readFileSync(moduleFileName).toString();
+                CSSModule[module]   = JSON.parse( classNames );
+            });
+
+            //css.site.c.card
+            //css.site.s.
 
             return {
                 "css" : CSSModule
             };
-
         }))
         .pipe(jade({pretty: true}))
         .pipe(gulp.dest(config.htmlDist))
@@ -107,7 +108,7 @@ gulp.task('cssVendor', function()
 gulp.task('css', function() {
 
     return gulp
-        .src('./src/css/**/component/card.css') // /src/css/bundle/module/name.css
+        .src(config.cssSite)
         .pipe(postcss([
             cssModules({
                 generateScopedName: function(name, filepath, css) {
@@ -119,17 +120,36 @@ gulp.task('css', function() {
                     var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0].charAt(0);
                     var fileName      = path.basename(filepath, '.css');
 
-                    //console.log('_' + name + '_' + bundleName + '_' + moduleName + '_' + fileName + numLines);
+                    // console.log('_' + name + '_' + bundleName + '_' + moduleName + '_' + fileName + numLines);
 
                     return '_' + name + '_' + bundleName + moduleName + fileName + numLines;
                 },
-                getJSON: function(cssFileName, json) {
-                    var cssName       = path.basename(cssFileName, '.css');
-                    var jsonFileName  = path.resolve('./css-modules/' + cssName + '.json');
-                    fs.writeFileSync(jsonFileName, JSON.stringify(json));
+                getJSON: function(filepath, json) {
+                    var pathParts     = path.dirname(filepath).split('/');
+                    var pathPartsLng  = pathParts.length;
+                    var bundleName    = pathParts.slice(pathPartsLng - 2, pathPartsLng - 1 )[0];
+                    var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0];
+                    var fileName      = path.basename(filepath, '.css');
+                    var jsonLocation  = './css-modules/' + bundleName + '/' + moduleName + '/';
+
+                    // create folder if does not exist
+                    mkdirp(jsonLocation, function (err) {
+                        if (err) { console.error(err); }
+                        else {
+                            // console.log('folder created');
+
+                            var jsonFileName  = path.resolve(jsonLocation + fileName + '.json');
+
+                            // console.log(jsonFileName);
+
+                            fs.writeFileSync(jsonFileName, JSON.stringify(json));
+                        }
+                    });
                 }
             })
         ]))
+        .pipe(concat('main.css'))
+        .pipe(cssnano())
         .pipe(gulp.dest('./dist/css'));
 });
 

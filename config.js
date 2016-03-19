@@ -30,6 +30,11 @@ var config = {
             //"bower_components/riot/riot.min.js",
         ]
     },
+    cssSite: [
+        './src/css/site/component/card.css',
+        './src/css/site/trump/typo.css'
+    ],
+    cssSpa: [],
     csslint : {
         'adjoining-classes': false,
         'box-model': false,
