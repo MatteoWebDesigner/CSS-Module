@@ -22,6 +22,7 @@ var htmlmin         = require('gulp-htmlmin');
 var jade            = require('gulp-jade');
 var postcss         = require('gulp-postcss');
 var cssModules      = require('postcss-modules');
+var sass            = require('gulp-sass');
 var concat          = require('gulp-concat');
 var browserify      = require('browserify');
 var riot            = require('riot');
@@ -65,11 +66,23 @@ gulp.task('html', function()
 
 gulp.task('jade', function()
 {
-    var json = require('./css-module.json')
+    var CSSModule = {};
+
+    function getClass(module) {
+        var moduleFileName  = path.resolve('./css-modules/' + module + '.json');
+        var classNames      = fs.readFileSync(moduleFileName).toString();
+        CSSModule[module] = JSON.parse( classNames );
+    }
 
     return gulp.src(config.jadePageFiles)
         .pipe(gulpData(function(file) {
-            return { className: json };
+
+            _.forEach(['main','typo'], getClass);
+
+            return {
+                "css" : CSSModule
+            };
+
         }))
         .pipe(jade({pretty: true}))
         .pipe(gulp.dest(config.htmlDist))
@@ -94,31 +107,39 @@ gulp.task('cssVendor', function()
 gulp.task('css', function() {
 
     return gulp
-        .src('./src/css/main.css')
+        .src('./src/css/**/component/card.css') // /src/css/bundle/module/name.css
         .pipe(postcss([
             cssModules({
+                generateScopedName: function(name, filepath, css) {
+                    var i             = css.indexOf('.' + name);
+                    var numLines      = css.substr(0, i).split(/[\r\n]/).length;
+                    var pathParts     = path.dirname(filepath).split('/');
+                    var pathPartsLng  = pathParts.length;
+                    var bundleName    = pathParts.slice(pathPartsLng - 2, pathPartsLng - 1 )[0];
+                    var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0].charAt(0);
+                    var fileName      = path.basename(filepath, '.css');
+
+                    //console.log('_' + name + '_' + bundleName + '_' + moduleName + '_' + fileName + numLines);
+
+                    return '_' + name + '_' + bundleName + moduleName + fileName + numLines;
+                },
                 getJSON: function(cssFileName, json) {
-                    var path          = require('path');
-                    var cssName       = path.resolve('./dist/main.css');
-                    var jsonFileName  = path.resolve('./css-module.json');
-
-                    console.log(cssFileName, json, cssName);
-
+                    var cssName       = path.basename(cssFileName, '.css');
+                    var jsonFileName  = path.resolve('./css-modules/' + cssName + '.json');
                     fs.writeFileSync(jsonFileName, JSON.stringify(json));
-                }
-            }),
-            cssModules({
-                generateScopedName: function(name, filename, css) {
-                    var path      = require('path');
-                    var i         = css.indexOf('.' + name);
-                    var numLines  = css.substr(0, i).split(/[\r\n]/).length;
-                    var file      = path.basename(filename, '.css');
-
-                    return '_' + file + '_' + numLines + '_' + name;
                 }
             })
         ]))
-        .pipe(gulp.dest('./build'));
+        .pipe(gulp.dest('./dist/css'));
+});
+
+
+gulp.task('build-bootstrap', function() {
+
+    return gulp
+        .src('./resources/bootstrap-sass/**/*.scss') // /src/css/bundle/module/name.css
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest('./resources/bootstrap-css/'));
 });
 
 
@@ -161,7 +182,7 @@ gulp.task('watch', function()
 
     gulp.watch(config.htmlFiles,['html']);
     gulp.watch(config.jadeFiles,['jade']);
-    gulp.watch(config.sassFiles,['css']);
+    gulp.watch(config.cssFiles,['jade','css']);
     gulp.watch([config.jsFiles,config.tagFiles],['js']);
 });
 
