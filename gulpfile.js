@@ -3,6 +3,7 @@
 var mkdirp          = require('mkdirp');
 var fs              = require('fs');
 var path            = require('path');
+var argv            = require('yargs').argv;
 var _               = require('lodash');
 var del             = require('del');
 var parseArgs       = require('minimist');
@@ -23,6 +24,7 @@ var htmlmin         = require('gulp-htmlmin');
 var jade            = require('gulp-jade');
 var postcss         = require('gulp-postcss');
 var cssModules      = require('postcss-modules');
+var autoprefixer    = require('autoprefixer');
 var cssnano         = require('gulp-cssnano');
 var sass            = require('gulp-sass');
 var concat          = require('gulp-concat');
@@ -72,17 +74,20 @@ gulp.task('jade', function()
         .pipe(gulpData(function(file) {
             var CSSModule = {};
 
-            _.forEach([
-                { bundleName:'site', moduleName: 'c', fileName : 'card' },
-                { bundleName:'site', moduleName: 't', fileName : 'typo' }
-            ], function (obj) {
-                var json  = path.resolve('./css-modules/' + obj.bundleName +'/'+ obj.moduleName +'/'+ obj.fileName + '.json');
-                var classNames      = fs.readFileSync(json).toString();
+            // loop bundle
+            _.forEach(config.cssBundle, function(modulesObj, bundleName) {
 
-                if (CSSModule[obj.bundleName] === undefined) { CSSModule[obj.bundleName] = {}; }
-                if (CSSModule[obj.bundleName][obj.moduleName] === undefined) { CSSModule[obj.bundleName][obj.moduleName] = {}; }
+                // loop modules
+                _.forEach(modulesObj, function (obj) {
+                    var shortModuleName = obj.moduleName.charAt(0);
+                    var json  = path.resolve('./css-modules/' + bundleName +'/'+ shortModuleName +'/'+ obj.fileName + '.json');
+                    var classNames      = fs.readFileSync(json).toString();
 
-                CSSModule[obj.bundleName][obj.moduleName]   = JSON.parse( classNames );
+                    if (CSSModule[bundleName] === undefined) { CSSModule[bundleName] = {}; }
+                    if (CSSModule[bundleName][shortModuleName] === undefined) { CSSModule[bundleName][shortModuleName] = {}; }
+
+                    CSSModule[bundleName][shortModuleName]   = JSON.parse( classNames );
+                });
             });
 
             return {
@@ -95,24 +100,24 @@ gulp.task('jade', function()
 });
 
 
-gulp.task('cssVendor', function()
-{
-    if (config.vendor.css.length == 0) {
-        console.log('vendor css empty');
-        return false;
+gulp.task('css', function() {
+    var bundle,
+        bundleName = argv.bundle,
+        bundleCss = [];
+
+    if (config.cssBundle[bundleName] === undefined) {
+        console.log('this bundle name does not exist');
+        process.exit(1);
     }
 
-    return gulp
-        .src(config.vendor.css)
-        .pipe(concat('vendor.css'))
-        .pipe(gulp.dest(config.cssDist));
-});
-
-
-gulp.task('css', function() {
+    // build path css
+    _.forEach(config.cssBundle[bundleName], function(obj) {
+        var cssPath = 'src/css/' + bundleName + '/' + obj.moduleName + '/'+ obj.fileName + '.css';
+        bundleCss.push(cssPath);
+    });
 
     return gulp
-        .src(config.cssSite)
+        .src(bundleCss)
         .pipe(postcss([
             cssModules({
                 generateScopedName: function(name, filepath, css) {
@@ -150,9 +155,10 @@ gulp.task('css', function() {
                         }
                     });
                 }
-            })
+            }),
+            autoprefixer({ browsers: ['last 2 versions'] })
         ]))
-        .pipe(concat('main.css'))
+        .pipe(concat('main-'+ bundleName +'.css'))
         .pipe(cssnano())
         .pipe(gulp.dest('./dist/css'));
 });
@@ -233,7 +239,7 @@ gulp.task('default', function ()
 {
     runSequence(
         'clean',
-        ['cssVendor','css'],
+        ['css'],
         ['fonts','html','jade','jsVendor','js'],
         'connect','watch'
     );

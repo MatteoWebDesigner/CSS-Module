@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/MatteoWebDesigner/CSS-Module#readme",
   "dependencies": {
+    "autoprefixer": "^6.3.3",
     "bower": "^1.6.9",
     "browserify": "^13.0.0",
     "del": "^2.2.0",
@@ -55,6 +56,7 @@
     "riot": "^2.3.16",
     "riotify": "^1.0.0",
     "run-sequence": "^1.1.5",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "yargs": "^4.3.2"
   }
 }

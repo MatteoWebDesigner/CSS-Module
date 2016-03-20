@@ -1,20 +1,20 @@
-extends ../templates/layout-site.jade
+extends ../templates/layout-spa.jade
 
 block title
-    | CSS Modules - Index Site
+    | CSS Modules - Index Spa
 
 block header
     div(class='container')
-        h1 Index Site
+        h1 Index SPA
 
 block content
     section(class="container")
         article
-            a(href="/index-spa.html") go to index spa
+            a(href="/index.html") go to index site
             
-            div(class=css.site.c.card)
+            div(class=css.spa.c.card)
                 h2 Title
                 p description
                 
-            p(class=css.site.t.text_small)
+            p(class=css.spa.t.text_small)
                 | text small

@@ -1,0 +1,24 @@
+doctype html
+html
+    head
+        meta(charset='utf-8')
+        title
+            block title
+
+        block style
+            link(rel='stylesheet',href='/css/main-spa.css')
+
+    body
+        
+        header
+            block header
+
+        main
+            block content
+
+        footer
+            div(class='container t_margin-bottom-xs-4')
+                | Made with <i class="icon-heart t_color-red"></i> by italians
+
+        // script dependency
+        script(src='/js/main.js')
