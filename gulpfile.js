@@ -72,14 +72,18 @@ gulp.task('jade', function()
         .pipe(gulpData(function(file) {
             var CSSModule = {};
 
-            _.forEach(['main','typo'], function (module) {
-                var moduleFileName  = path.resolve('./css-modules/' + module + '.json');
-                var classNames      = fs.readFileSync(moduleFileName).toString();
-                CSSModule[module]   = JSON.parse( classNames );
-            });
+            _.forEach([
+                { bundleName:'site', moduleName: 'c', fileName : 'card' },
+                { bundleName:'site', moduleName: 't', fileName : 'typo' }
+            ], function (obj) {
+                var json  = path.resolve('./css-modules/' + obj.bundleName +'/'+ obj.moduleName +'/'+ obj.fileName + '.json');
+                var classNames      = fs.readFileSync(json).toString();
 
-            //css.site.c.card
-            //css.site.s.
+                if (CSSModule[obj.bundleName] === undefined) { CSSModule[obj.bundleName] = {}; }
+                if (CSSModule[obj.bundleName][obj.moduleName] === undefined) { CSSModule[obj.bundleName][obj.moduleName] = {}; }
+
+                CSSModule[obj.bundleName][obj.moduleName]   = JSON.parse( classNames );
+            });
 
             return {
                 "css" : CSSModule
@@ -128,7 +132,7 @@ gulp.task('css', function() {
                     var pathParts     = path.dirname(filepath).split('/');
                     var pathPartsLng  = pathParts.length;
                     var bundleName    = pathParts.slice(pathPartsLng - 2, pathPartsLng - 1 )[0];
-                    var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0];
+                    var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0].charAt(0);
                     var fileName      = path.basename(filepath, '.css');
                     var jsonLocation  = './css-modules/' + bundleName + '/' + moduleName + '/';
 
