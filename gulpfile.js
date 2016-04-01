@@ -203,6 +203,14 @@ gulp.task('js', function()
 });
 
 
+gulp.task('assets', function()
+{
+    return gulp
+        .src(config.assetsFiles)
+        .pipe(gulp.dest(config.assetsDist));
+});
+
+
 gulp.task('watch', function()
 {
     livereload.listen();
@@ -237,6 +245,7 @@ gulp.task('default', function ()
     runSequence(
         ['css'],
         ['fonts','html','jade','jsVendor','js'],
+        ['assets'],
         'connect','watch'
     );
 });

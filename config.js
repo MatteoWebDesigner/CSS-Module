@@ -16,8 +16,10 @@ var config = {
     cssDistFiles:  "dist/css/*.css",
     jsMain:        "src/js/main.js",
     jsFiles:       "src/js/**/*.js",
-    tagFiles:       "src/js/**/*.tag",
+    tagFiles:      "src/js/**/*.tag",
     jsDist:        "dist/js/",
+    assetsFiles:   "src/assets/**/*",
+    assetsDist:    "dist/assets/",
     vendor: {
         js: [
             "bower_components/lodash/dist/lodash.core.min.js", // if you want complete lodash remove core
