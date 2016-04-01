@@ -29,8 +29,6 @@ var cssnano         = require('gulp-cssnano');
 var sass            = require('gulp-sass');
 var concat          = require('gulp-concat');
 var browserify      = require('browserify');
-var riot            = require('riot');
-var riotify         = require('riotify');
 var source          = require('vinyl-source-stream');
 var jshint          = require('gulp-jshint');
 var uglify          = require('gulp-uglify');
@@ -191,7 +189,6 @@ gulp.task('jsVendor', function()
 gulp.task('js', function()
 {
     return browserify({ entries: [config.jsMain] })
-        .transform(riotify) // pass options if you need
         .bundle()
         .pipe(source('main.js'))
         .pipe(gulp.dest(config.jsDist))
@@ -238,7 +235,6 @@ gulp.task('connect', function()
 gulp.task('default', function ()
 {
     runSequence(
-        'clean',
         ['css'],
         ['fonts','html','jade','jsVendor','js'],
         'connect','watch'
