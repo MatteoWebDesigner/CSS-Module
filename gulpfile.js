@@ -158,16 +158,20 @@ gulp.task('css', function() {
                         }
                     });
                 }
-            }),
-            cssLint(config.csslint),
-            cssDoiuse({
-                browsers: config.browserSupport,
-                onFeatureUsage: function(usageInfo) {
-                    console.log(usageInfo.message);
-                }
             })
         ]))
         .pipe(concat('main-'+ bundleName +'.css'))
+        .pipe(
+            postcss([
+                cssDoiuse({
+                    browsers: config.browserSupport,
+                    onFeatureUsage: function(usageInfo) {
+                        console.log(usageInfo.message);
+                    }
+                }),
+                cssLint(config.csslint)
+            ])
+        )
         .pipe(cssnano())
         .pipe(gulp.dest('./dist/css'));
 });

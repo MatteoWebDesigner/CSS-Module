@@ -26,11 +26,12 @@ var config = {
             "bower_components/moment/min/moment.min.js"
         ]
     },
-    browserSupport: ['ie >= 6', '> 1%'],
+    browserSupport: ['ie >= 8', '> 1%'],
     cssBundle: {
         "site" : [
             { moduleName: 'component', fileName : 'card' },
-            { moduleName: 'trump', fileName : 'typo' }
+            { moduleName: 'trump', fileName : 'typo' },
+            { moduleName: 'section', fileName : 'index' }
         ],
         "spa" : [
             { moduleName: 'component', fileName : 'card' },
@@ -38,22 +39,12 @@ var config = {
         ]
     },
     csslint : {
-        "rules": {
-            // "adjoining-classes": false,
-            // "box-model": false,
-            // "box-sizing": false,
-            // "compatible-vendor-prefixes": false,
-            // "important": false,
-            // "outline-none": false,
-            // "order-alphabetical": false,
-            // "font-sizes": false,
-            // "qualified-headings": false,
-            // "unqualified-attributes": false,
-            // "regex-selectors": false,
-            // "unique-headings": false,
-            // "universal-selector": false,
-            // "zero-units": false
+        rules: {
+            "no-duplicate-selectors": true
         },
+        reporters: [
+            {formatter: 'string', console: true}
+        ],
         debug: true
     },
     templates: [

@@ -1,5 +1,6 @@
 :root {
     --color-base: black;
+    --color-gray: gray;
 
     --color-primary: blue;
     --color-secondary: purple;
@@ -7,6 +8,25 @@
     --color-danger: red;
 }
 
+.row { margin: 0 -15px; }
+.row:before,
+.row:after {
+    content: ' ';
+    display: table;
+    clear: both;
+}
+
+.col {
+    width: 25%;
+    padding: 15px;
+    float: left;
+}
+
 .card {
     color: var(--color-primary);
+    border: 1px solid var(--color-gray);
+    padding: 15px;
+}
+.cardImage {
+    width: 100%;
 }

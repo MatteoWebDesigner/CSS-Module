@@ -1,0 +1,9 @@
+.indexCard {
+    composes: card from "../component/card.css";
+    border-width: 3px;
+    transition: background-color .2s linear;
+    cursor: pointer;
+}
+.indexCard:hover {
+    background-color: rgba(0,0,0,.1);
+}
