@@ -1,10 +1,12 @@
-/*
-.test {
-    composes: text_small from "../trump/typo.css";
-    color:red;
+:root {
+    --color-base: black;
+
+    --color-primary: blue;
+    --color-secondary: purple;
+    --color-success: green;
+    --color-danger: red;
 }
-*/
 
 .card {
-    color:red;
+    color: var(--color-primary);
 }

@@ -20,13 +20,17 @@ var open            = require('gulp-open');
 var livereload      = require('gulp-livereload');
 var sourcemaps      = require('gulp-sourcemaps');
 var gulpData        = require('gulp-data');
+
 var htmlmin         = require('gulp-htmlmin');
 var jade            = require('gulp-jade');
+
 var postcss         = require('gulp-postcss');
 var cssModules      = require('postcss-modules');
-var autoprefixer    = require('autoprefixer');
+var cssNext         = require('postcss-cssnext');
 var cssnano         = require('gulp-cssnano');
-var sass            = require('gulp-sass');
+var cssDoiuse       = require('doiuse');
+var cssLint         = require('stylelint');
+
 var concat          = require('gulp-concat');
 var browserify      = require('browserify');
 var source          = require('vinyl-source-stream');
@@ -117,6 +121,7 @@ gulp.task('css', function() {
     return gulp
         .src(bundleCss)
         .pipe(postcss([
+            cssNext({ browsers: config.browserSupport }),
             cssModules({
                 generateScopedName: function(name, filepath, css) {
                     var i             = css.indexOf('.' + name);
@@ -154,7 +159,13 @@ gulp.task('css', function() {
                     });
                 }
             }),
-            autoprefixer({ browsers: ['last 2 versions'] })
+            cssLint(config.csslint),
+            cssDoiuse({
+                browsers: config.browserSupport,
+                onFeatureUsage: function(usageInfo) {
+                    console.log(usageInfo.message);
+                }
+            })
         ]))
         .pipe(concat('main-'+ bundleName +'.css'))
         .pipe(cssnano())
