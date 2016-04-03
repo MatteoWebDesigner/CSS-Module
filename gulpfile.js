@@ -162,17 +162,22 @@ gulp.task('css', function() {
         .pipe(concat('main-'+ bundleName +'.css'))
         .pipe(
             postcss([
-                cssNext({ browsers: config.browserSupport }),
+                cssNext({ browsers: config.browserSupport })
+            ])
+        )
+        .pipe(cssnano())
+        .pipe(
+            postcss([
                 cssDoiuse({
                     browsers: config.browserSupport,
                     onFeatureUsage: function(usageInfo) {
                         console.log(usageInfo.message);
-                    }
+                    },
+                    ignore: ['css-transitions']
                 }),
                 cssLint(config.csslint)
             ])
         )
-        .pipe(cssnano())
         .pipe(gulp.dest('./dist/css'));
 });
 

@@ -1,3 +1,40 @@
-.textSmall {
+/* color */
+.colorBase {
+    color: var(--color-base);
+}
+.colorGray {
+    color: var(--color-gray);
+}
+.colorPrimary {
+    color: var(--color-primary);
+}
+.colorSecondary {
+    color: var(--color-secondary);
+}
+.colorSuccess {
+    color: var(--color-success);
+}
+.colorDanger {
+    color: var(--color-danger);
+}
+
+
+/* text sizes*/
+.textXSmall {
     font-size: 10px;
+}
+.textSmall {
+    font-size: 12px;
+}
+.textSizeBase {
+    font-size: 14px;
+}
+.textMedium {
+    font-size: 16px;
+}
+.textBig {
+    font-size: 18px;
+}
+.textHuge {
+    font-size: 24px;
 }

@@ -7,3 +7,11 @@
 .indexCard:hover {
     background-color: rgba(0,0,0,.1);
 }
+
+.indexCardTitle {
+    composes: textHeader from "../component/text.css";
+    composes: colorBase from "../trump/typo.css";
+}
+.indexCardDescription {
+    composes: textDescription from "../component/text.css";
+}

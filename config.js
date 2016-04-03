@@ -26,7 +26,7 @@ var config = {
             "bower_components/moment/min/moment.min.js"
         ]
     },
-    browserSupport: ['ie >= 8', '> 1%'],
+    browserSupport: ['ie >= 9', '> 1%'],
     cssBundle: {
         "site" : [
             { moduleName:'setting', fileName:'theme', abstract:true },
