@@ -16,6 +16,3 @@ Because jade is processing both templates and it requires the complete json to c
 - css modules
 - doiuse
 - stylelint
-
-## TODO
-* https://github.com/andyjansson/postcss-functions
