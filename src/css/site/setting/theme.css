@@ -1,4 +1,5 @@
 :root {
+    /* colors */
     --color-base: black;
     --color-gray: gray;
 
@@ -6,4 +7,12 @@
     --color-secondary: purple;
     --color-success: green;
     --color-danger: red;
+
+    /* text sizes */
+    --textXsmall:   10px;
+    --textSmall:    12px;
+    --textSizeBase: 14px;
+    --textMedium:   16px;
+    --textBig:      18px;
+    --textHuge:     24px;
 }

@@ -20,21 +20,21 @@
 
 
 /* text sizes*/
-.textXSmall {
-    font-size: 10px;
+.textXsmall {
+    font-size: var(--textXsmall);
 }
 .textSmall {
-    font-size: 12px;
+    font-size: var(--textSmall);
 }
 .textSizeBase {
-    font-size: 14px;
+    font-size: var(--textSizeBase);
 }
 .textMedium {
-    font-size: 16px;
+    font-size: var(--textMedium);
 }
 .textBig {
-    font-size: 18px;
+    font-size: var(--textBig);
 }
 .textHuge {
-    font-size: 24px;
+    font-size: var(--textHuge);
 }

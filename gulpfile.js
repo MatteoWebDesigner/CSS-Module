@@ -130,8 +130,8 @@ gulp.task('css', function() {
                     var numLines      = css.substr(0, i).split(/[\r\n]/).length;
                     var pathParts     = path.dirname(filepath).split('/');
                     var pathPartsLng  = pathParts.length;
-                    var bundleName    = pathParts.slice(pathPartsLng - 2, pathPartsLng - 1 )[0];
-                    var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0].charAt(0);
+                    var bundleName    = pathParts.slice(pathPartsLng - 2, pathPartsLng - 1)[0];
+                    var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng)[0].charAt(0);
                     var fileName      = path.basename(filepath, '.css');
 
                     return '_' + name + '_' + bundleName + moduleName + fileName + numLines;

@@ -53,11 +53,6 @@ var config = {
         'src/js/**/*.js'
     ],
     deprecationEndDate: '2016, 2, 28', // (yyyy, mm, dd) keep in mind month start from 0
-    deprecatedClasses : [{
-        regex: /("|'| )old-class("|'| )/g,
-        oldClass: 'old-class',
-        newClass: 'new-class'
-    }],
     preprocess: {
         context: { ANTICACHE : new Date().getTime() }
     }
