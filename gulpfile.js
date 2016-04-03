@@ -81,14 +81,17 @@ gulp.task('jade', function()
 
                 // loop modules
                 _.forEach(modulesObj, function (obj) {
-                    var shortModuleName = obj.moduleName.charAt(0);
-                    var json  = path.resolve('./css-modules/' + bundleName +'/'+ shortModuleName +'/'+ obj.fileName + '.json');
-                    var classNames      = fs.readFileSync(json).toString();
+                    // pick json only if it is not abstract
+                    if (obj.abstract !== true) {
+                        var shortModuleName = obj.moduleName.charAt(0);
+                        var json  = path.resolve('./css-modules/' + bundleName +'/'+ shortModuleName +'/'+ obj.fileName + '.json');
+                        var classNames      = fs.readFileSync(json).toString();
 
-                    if (CSSModule[bundleName] === undefined) { CSSModule[bundleName] = {}; }
-                    if (CSSModule[bundleName][shortModuleName] === undefined) { CSSModule[bundleName][shortModuleName] = {}; }
+                        if (CSSModule[bundleName] === undefined) { CSSModule[bundleName] = {}; }
+                        if (CSSModule[bundleName][shortModuleName] === undefined) { CSSModule[bundleName][shortModuleName] = {}; }
 
-                    CSSModule[bundleName][shortModuleName]   = JSON.parse( classNames );
+                        CSSModule[bundleName][shortModuleName]   = JSON.parse( classNames );
+                    }
                 });
             });
 
@@ -121,7 +124,6 @@ gulp.task('css', function() {
     return gulp
         .src(bundleCss)
         .pipe(postcss([
-            cssNext({ browsers: config.browserSupport }),
             cssModules({
                 generateScopedName: function(name, filepath, css) {
                     var i             = css.indexOf('.' + name);
@@ -132,37 +134,35 @@ gulp.task('css', function() {
                     var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0].charAt(0);
                     var fileName      = path.basename(filepath, '.css');
 
-                    // console.log('_' + name + '_' + bundleName + '_' + moduleName + '_' + fileName + numLines);
-
                     return '_' + name + '_' + bundleName + moduleName + fileName + numLines;
                 },
                 getJSON: function(filepath, json) {
-                    var pathParts     = path.dirname(filepath).split('/');
-                    var pathPartsLng  = pathParts.length;
-                    var bundleName    = pathParts.slice(pathPartsLng - 2, pathPartsLng - 1 )[0];
-                    var moduleName    = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0].charAt(0);
-                    var fileName      = path.basename(filepath, '.css');
-                    var jsonLocation  = './css-modules/' + bundleName + '/' + moduleName + '/';
+                    var pathParts      = path.dirname(filepath).split('/');
+                    var pathPartsLng   = pathParts.length;
+                    var bundleName     = pathParts.slice(pathPartsLng - 2, pathPartsLng - 1 )[0];
+                    var moduleNameLong = pathParts.slice(pathPartsLng - 1 , pathPartsLng )[0];
+                    var moduleName     = moduleNameLong.charAt(0);
+                    var fileName       = path.basename(filepath, '.css');
+                    var jsonLocation   = './css-modules/' + bundleName + '/' + moduleName + '/';
+                    var fileConfig     =  _.filter(config.cssBundle[bundleName], { moduleName:moduleNameLong, fileName:fileName})[0]; // you should have only one
 
-                    // create folder if does not exist
-                    mkdirp(jsonLocation, function (err) {
-                        if (err) { console.error(err); }
-                        else {
-                            // console.log('folder created');
-
-                            var jsonFileName  = path.resolve(jsonLocation + fileName + '.json');
-
-                            // console.log(jsonFileName);
-
-                            fs.writeFileSync(jsonFileName, JSON.stringify(json));
-                        }
-                    });
+                    if (fileConfig.abstract !== true) {
+                        // create folder if does not exist
+                        mkdirp(jsonLocation, function (err) {
+                            if (err) { console.error(err); }
+                            else {
+                                var jsonFileName  = path.resolve(jsonLocation + fileName + '.json');
+                                fs.writeFileSync(jsonFileName, JSON.stringify(json));
+                            }
+                        });
+                    }
                 }
             })
         ]))
         .pipe(concat('main-'+ bundleName +'.css'))
         .pipe(
             postcss([
+                cssNext({ browsers: config.browserSupport }),
                 cssDoiuse({
                     browsers: config.browserSupport,
                     onFeatureUsage: function(usageInfo) {

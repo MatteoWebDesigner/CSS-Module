@@ -29,13 +29,14 @@ var config = {
     browserSupport: ['ie >= 8', '> 1%'],
     cssBundle: {
         "site" : [
-            { moduleName: 'component', fileName : 'card' },
-            { moduleName: 'trump', fileName : 'typo' },
-            { moduleName: 'section', fileName : 'index' }
+            { moduleName:'setting', fileName:'theme', abstract:true },
+            { moduleName:'component', fileName:'card' },
+            { moduleName:'trump', fileName:'typo' },
+            { moduleName:'section', fileName:'index' }
         ],
         "spa" : [
-            { moduleName: 'component', fileName : 'card' },
-            { moduleName: 'trump', fileName : 'typo' }
+            { moduleName:'component', fileName:'card' },
+            { moduleName:'trump', fileName:'typo' }
         ]
     },
     csslint : {

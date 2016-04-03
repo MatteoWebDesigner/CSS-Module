@@ -1,0 +1,9 @@
+:root {
+    --color-base: black;
+    --color-gray: gray;
+
+    --color-primary: blue;
+    --color-secondary: purple;
+    --color-success: green;
+    --color-danger: red;
+}
