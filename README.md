@@ -2,8 +2,8 @@
 System to create isolated bundle.
 
 ## Build bundle
-> gulp --bundle=site
-> gulp --bundle=spa
+- > gulp --bundle=site
+- > gulp --bundle=spa
 
 ###Note:
 You need to build both "site" and "spa".
