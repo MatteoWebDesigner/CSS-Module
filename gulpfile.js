@@ -117,7 +117,12 @@ gulp.task('css', function() {
 
     // build path css
     _.forEach(config.cssBundle[bundleName], function(obj) {
-        var cssPath = 'src/css/' + bundleName + '/' + obj.moduleName + '/'+ obj.fileName + '.css';
+        if (obj.external) {
+            var cssPath = 'src/css/' + obj.external + '/' + obj.moduleName + '/'+ obj.fileName + '.css';
+        } else {
+            var cssPath = 'src/css/' + bundleName + '/' + obj.moduleName + '/'+ obj.fileName + '.css';
+        }
+
         bundleCss.push(cssPath);
     });
 
@@ -237,8 +242,8 @@ gulp.task('watch', function()
 
     gulp.watch(config.htmlFiles,['html']);
     gulp.watch(config.jadeFiles,['jade']);
-    gulp.watch(config.cssFiles,['jade','css']);
-    gulp.watch([config.jsFiles,config.tagFiles],['js']);
+    gulp.watch(config.cssFiles,['css']);
+    gulp.watch([config.jsFiles],['js']);
 });
 
 

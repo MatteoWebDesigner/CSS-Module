@@ -16,7 +16,6 @@ var config = {
     cssDistFiles:  "dist/css/*.css",
     jsMain:        "src/js/main.js",
     jsFiles:       "src/js/**/*.js",
-    tagFiles:      "src/js/**/*.tag",
     jsDist:        "dist/js/",
     assetsFiles:   "src/assets/**/*",
     assetsDist:    "dist/assets/",
@@ -28,13 +27,14 @@ var config = {
     },
     browserSupport: ['ie >= 9', '> 1%'],
     cssBundle: {
-        "site" : [
+        'site' : [
             { moduleName:'setting', fileName:'theme', abstract:true },
             { moduleName:'component', fileName:'card' },
+            { moduleName:'component', fileName:'card', external:'spa' },
             { moduleName:'trump', fileName:'typo' },
             { moduleName:'section', fileName:'index' }
         ],
-        "spa" : [
+        'spa' : [
             { moduleName:'component', fileName:'card' },
             { moduleName:'trump', fileName:'typo' }
         ]
@@ -52,7 +52,6 @@ var config = {
         'src/views/**/*.jade',
         'src/js/**/*.js'
     ],
-    deprecationEndDate: '2016, 2, 28', // (yyyy, mm, dd) keep in mind month start from 0
     preprocess: {
         context: { ANTICACHE : new Date().getTime() }
     }
