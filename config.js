@@ -29,6 +29,7 @@ var config = {
     cssBundle: {
         'site' : [
             { moduleName:'setting', fileName:'theme', abstract:true },
+            { moduleName:'component', fileName:'text' },
             { moduleName:'component', fileName:'card' },
             { moduleName:'component', fileName:'card', external:'spa' },
             { moduleName:'trump', fileName:'typo' },

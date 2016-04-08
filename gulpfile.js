@@ -90,11 +90,11 @@ gulp.task('jade', function()
                         if (CSSModule[bundleName] === undefined) { CSSModule[bundleName] = {}; }
                         if (CSSModule[bundleName][shortModuleName] === undefined) { CSSModule[bundleName][shortModuleName] = {}; }
 
-                        CSSModule[bundleName][shortModuleName]   = JSON.parse( classNames );
+                        CSSModule[bundleName][shortModuleName]   = _.merge(CSSModule[bundleName][shortModuleName],JSON.parse( classNames ));
                     }
                 });
             });
-
+            
             return {
                 "css" : CSSModule
             };

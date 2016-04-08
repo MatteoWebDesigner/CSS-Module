@@ -6,3 +6,12 @@
 .textDescription {
     margin:0 0 15px 0;
 }
+
+.test {
+    composes: textBig from "../trump/typo.css";
+    color:blue;
+}
+
+.test2 {
+    color:purple;
+}
