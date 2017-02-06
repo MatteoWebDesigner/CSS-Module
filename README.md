@@ -18,3 +18,6 @@ Because jade is processing both templates and it requires the complete json to c
 - css modules
 - doiuse
 - stylelint
+
+## Extra
+- [web and android style comparison](web-android-style.md)
