@@ -1,6 +1,7 @@
 # Inline style
-web
-```
+## web
+page.html
+```html
 <span
 	style="
 		width: 100%;
@@ -11,8 +12,9 @@ web
 	>{{hello}}</span>
 ```
 
-android
-```
+## android
+page.xml
+```xml
 <TextView
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -22,25 +24,27 @@ android
 ```
 
 # Create style definition
-web
-```
-/* code-font.css */
+## web
+code-font.css
+```css
 .CodeFont {
 	width: 100%;
 	height: 100px;
 	color: #00FF00;
 	font-family: monospace;
 }
+```
 
-<!-- page.html -->
+page.html
+```html
 <span 
 	class="CodeFont"
 	>{{hello}}</span>
 ```
 
-android
-```
-<!-- code-font.xml -->
+## android
+code-font.xml
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="CodeFont">
@@ -50,17 +54,19 @@ android
         <item name="android:typeface">monospace</item>
     </style>
 </resources>
+```
 
-<!-- page.xml -->
+page.xml
+```xml
 <TextView
     style="@style/CodeFont"
     android:text="@string/hello" />
 ```	
 	
 # Inheritance
-web
-```
-/* code-font.css */
+## web
+code-font.css
+```css
 .CodeFont {
 	composes: TextAppearance from "./style/text-appearance.css";
 	font-family: monospace;
@@ -70,16 +76,18 @@ web
 	composes: CodeFont;
 	font-size: 30px;	
 }
+```
 
-<!-- page.html -->
+page.html
+```html
 <span 
 	class="{{style.CodeFontBig}}"
 	>{{hello}}</span>
 ```
 
-android
-```
-<!-- code-font.xml -->
+## android
+code-font.xml
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="CodeFont" parent="@android:style/TextAppearance">
@@ -90,8 +98,10 @@ android
         <item name="android:textSize">30sp</item>
     </style>
 </resources>
+```
 
-<!-- page.xml -->
+page.xml
+```xml
 <TextView
     style="@style/CodeFont.Big"
     android:text="@string/hello" />
