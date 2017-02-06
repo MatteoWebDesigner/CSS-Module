@@ -9,7 +9,7 @@ page.html
 		color: #00FF00;
 		font-family: monospace;
 	"
-	>{{hello}}</span>
+	>{this.props.hello}</span>
 ```
 
 ## android
@@ -38,8 +38,8 @@ code-font.css
 page.html
 ```html
 <span 
-	class="CodeFont"
-	>{{hello}}</span>
+	class={style.CodeFont}
+	>{this.props.hello}</span>
 ```
 
 ## android
@@ -81,8 +81,8 @@ code-font.css
 page.html
 ```html
 <span 
-	class="{{style.CodeFontBig}}"
-	>{{hello}}</span>
+	class={style.CodeFontBig}
+	>{this.props.hello}</span>
 ```
 
 ## android
